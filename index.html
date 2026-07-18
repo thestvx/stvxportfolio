@@ -45,10 +45,10 @@
         :root {
             --primary: #18181B;
             --secondary: #3F3F46;
-            --cta: #2563EB;
+            --cta: #d6aa24;
             --background: #09090B;
             --text: #FAFAFA;
-            --accent: #3B82F6;
+            --accent: #d6aa24;
         }
 
         body {
@@ -202,8 +202,6 @@
             width: 100%;
             height: auto;
             display: block;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
         }
 
         .scroll-indicator {
@@ -217,14 +215,6 @@
             gap: 0.5rem;
             animation: bounce 2s ease-in-out infinite;
             z-index: 10;
-        }
-
-        .scroll-indicator span {
-            font-family: 'Monument Extended', sans-serif;
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            opacity: 0.5;
-            color: var(--text);
         }
 
         .scroll-line {
@@ -254,8 +244,6 @@
             width: 100%;
             height: auto;
             display: block;
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
         }
 
         /* Fade in animation - only opacity, no transform to avoid resample */
@@ -305,62 +293,45 @@
             border-color: var(--cta);
         }
 
-        /* Footer */
-        .footer {
-            min-height: 100vh;
+        /* Social Bar */
+        .social-bar {
+            width: 100%;
+            padding: 2rem 3rem;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: var(--background);
+            position: relative;
+            z-index: 10;
+        }
+
+        .social-bar a {
+            display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 4rem 2rem;
-            position: relative;
-        }
-
-        .footer-title {
-            font-family: 'F37 Zagma Arabic', sans-serif;
-            font-size: clamp(2rem, 6vw, 5rem);
-            font-weight: 700;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, var(--text), var(--cta));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 3rem;
-            margin-top: 3rem;
-        }
-
-        .footer-links a {
-            color: var(--text);
-            text-decoration: none;
-            font-family: 'Monument Extended', sans-serif;
-            font-size: 1rem;
-            opacity: 0.6;
             transition: all 0.3s ease;
-            position: relative;
+            filter: grayscale(100%) brightness(0.7);
+            opacity: 0.5;
         }
 
-        .footer-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--cta);
-            transition: width 0.3s ease;
-        }
-
-        .footer-links a:hover {
+        .social-bar a:hover {
+            filter: grayscale(0%) brightness(1);
             opacity: 1;
+            transform: translateY(-2px);
         }
 
-        .footer-links a:hover::after {
-            width: 100%;
+        .social-bar a img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .social-divider {
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* Responsive */
@@ -465,7 +436,6 @@
             <img src="01.png" alt="Design 01">
         </div>
         <div class="scroll-indicator">
-            <span>SCROLL</span>
             <div class="scroll-line"></div>
         </div>
     </section>
@@ -659,17 +629,32 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <section class="footer" id="contact">
-        <h2 class="footer-title">Let's Create Together</h2>
-        <p style="opacity: 0.6; font-size: 1.125rem;">Ready to bring your vision to life?</p>
-        <div class="footer-links">
-            <a href="mailto:hello@stvx.com">Email</a>
-            <a href="#">Twitter</a>
-            <a href="#">Instagram</a>
-            <a href="#">Behance</a>
-        </div>
-    </section>
+    <!-- Social Bar -->
+    <div class="social-bar" id="contact">
+        <a href="mailto:faroukkir01@gmail.com" aria-label="Email">
+            <img src="icons/email.png" alt="Email">
+        </a>
+        <div class="social-divider"></div>
+        <a href="https://x.com/iistevexn" target="_blank" rel="noopener noreferrer" aria-label="X">
+            <img src="icons/x.png" alt="X">
+        </a>
+        <div class="social-divider"></div>
+        <a href="https://www.instagram.com/stvx.jpg/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <img src="icons/instagram.png" alt="Instagram">
+        </a>
+        <div class="social-divider"></div>
+        <a href="https://www.facebook.com/iiStevexn/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <img src="icons/facebook.png" alt="Facebook">
+        </a>
+        <div class="social-divider"></div>
+        <a href="https://www.behance.net/stvx" target="_blank" rel="noopener noreferrer" aria-label="Behance">
+            <img src="icons/behance.png" alt="Behance">
+        </a>
+        <div class="social-divider"></div>
+        <a href="https://wa.me/213778789684" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <img src="icons/whatsapp.png" alt="WhatsApp">
+        </a>
+    </div>
 
     <script>
         window.addEventListener('load', () => {
