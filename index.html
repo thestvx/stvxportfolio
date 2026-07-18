@@ -56,6 +56,8 @@
             background: var(--background);
             color: var(--text);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* Loading Screen */
@@ -125,8 +127,9 @@
         }
 
         .logo img {
-            height: 40px;
+            height: 70px;
             width: auto;
+            display: block;
         }
 
         .nav-links {
@@ -184,19 +187,23 @@
             opacity: 0.5;
         }
 
-        /* Hero - Full 01.png */
+        /* Hero - 01.png at native resolution, no crop, no resample */
         .hero {
             width: 100%;
-            min-height: 100vh;
             position: relative;
+            background: var(--background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
         }
 
         .hero img {
             width: 100%;
-            height: 100vh;
-            object-fit: cover;
+            height: auto;
             display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
 
         .scroll-indicator {
@@ -231,7 +238,7 @@
             50% { transform: translateX(-50%) translateY(10px); }
         }
 
-        /* Presentation - Full width images, no frames */
+        /* Presentation - Full width images, no frames, no resample */
         .presentation {
             position: relative;
         }
@@ -240,23 +247,25 @@
             width: 100%;
             position: relative;
             overflow: hidden;
+            scroll-snap-align: start;
         }
 
         .slide img {
             width: 100%;
+            height: auto;
             display: block;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
         }
 
-        /* Fade in animation */
+        /* Fade in animation - only opacity, no transform to avoid resample */
         .slide-content {
             opacity: 0;
-            transform: translateY(60px);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .slide-content.visible {
             opacity: 1;
-            transform: translateY(0);
         }
 
         /* Controls */
@@ -360,6 +369,10 @@
                 padding: 1rem 1.5rem;
             }
 
+            .logo img {
+                height: 50px;
+            }
+
             .nav-links {
                 display: none;
             }
@@ -446,7 +459,7 @@
         </button>
     </div>
 
-    <!-- Hero - 01.png full width -->
+    <!-- Hero - 01.png at native resolution -->
     <section class="hero" id="home">
         <div class="slide-content visible">
             <img src="01.png" alt="Design 01">
@@ -671,6 +684,7 @@
         let currentSlide = 1;
         let isPlaying = false;
         let playInterval;
+        let scrollTimeout;
 
         const slideObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -681,7 +695,7 @@
                     updateProgress(slideNum);
                 }
             });
-        }, { threshold: 0.3 });
+        }, { threshold: 0.5 });
 
         slides.forEach(slide => slideObserver.observe(slide));
 
@@ -691,9 +705,42 @@
             progressText.textContent = String(num).padStart(2, '0') + '/38';
         }
 
+        function smoothScrollTo(element, duration) {
+            const targetY = element.getBoundingClientRect().top + window.pageYOffset;
+            const startY = window.pageYOffset;
+            const distance = targetY - startY;
+            const startTime = performance.now();
+
+            function easeInOutCubic(t) {
+                return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+
+            function step(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = easeInOutCubic(progress);
+                window.scrollTo(0, startY + distance * eased);
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        function scrollToSlide(num) {
+            let target;
+            if (num === 0) {
+                smoothScrollTo(document.querySelector('.hero'), 1200);
+                return;
+            }
+            target = document.querySelector(`[data-slide="${num}"]`);
+            if (target) smoothScrollTo(target, 1200);
+        }
+
         document.getElementById('prevBtn').addEventListener('click', () => {
             if (currentSlide > 2) scrollToSlide(currentSlide - 1);
-            else window.scrollTo({ top: 0, behavior: 'smooth' });
+            else scrollToSlide(0);
         });
 
         document.getElementById('nextBtn').addEventListener('click', () => {
@@ -708,17 +755,12 @@
                 playInterval = setInterval(() => {
                     if (currentSlide < 38) scrollToSlide(currentSlide + 1);
                     else scrollToSlide(2);
-                }, 3000);
+                }, 4000);
             } else {
                 this.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
                 clearInterval(playInterval);
             }
         });
-
-        function scrollToSlide(num) {
-            const slide = document.querySelector(`[data-slide="${num}"]`);
-            if (slide) slide.scrollIntoView({ behavior: 'smooth' });
-        }
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
@@ -727,7 +769,7 @@
             } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
                 e.preventDefault();
                 if (currentSlide > 2) scrollToSlide(currentSlide - 1);
-                else window.scrollTo({ top: 0, behavior: 'smooth' });
+                else scrollToSlide(0);
             } else if (e.key === ' ') {
                 e.preventDefault();
                 document.getElementById('playBtn').click();
