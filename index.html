@@ -1,765 +1,484 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STVX Portfolio</title>
-    <style>
-        @font-face {
-            font-family: 'Monument Extended';
-            src: url('fonts/en/MonumentExtended-Regular.otf') format('opentype');
-            font-weight: 400;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Monument Extended';
-            src: url('fonts/en/MonumentExtended-Ultrabold.otf') format('opentype');
-            font-weight: 800;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'F37 Zagma Arabic';
-            src: url('fonts/ar/F37ZagmaArabicTrial-Light.otf') format('opentype');
-            font-weight: 300;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'F37 Zagma Arabic';
-            src: url('fonts/ar/F37ZagmaArabicTrial-Regular.otf') format('opentype');
-            font-weight: 400;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'F37 Zagma Arabic';
-            src: url('fonts/ar/F37ZagmaArabicTrial-Bold.otf') format('opentype');
-            font-weight: 700;
-            font-style: normal;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STVX — Creative Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.19/dist/lenis.min.js"></script>
+<style>
+@font-face{font-family:'Monument Extended';src:url('fonts/en/MonumentExtended-Regular.otf') format('opentype');font-weight:400;font-style:normal}
+@font-face{font-family:'Monument Extended';src:url('fonts/en/MonumentExtended-Ultrabold.otf') format('opentype');font-weight:800;font-style:normal}
+@font-face{font-family:'F37 Zagma Arabic';src:url('fonts/ar/F37ZagmaArabicTrial-Light.otf') format('opentype');font-weight:300;font-style:normal}
+@font-face{font-family:'F37 Zagma Arabic';src:url('fonts/ar/F37ZagmaArabicTrial-Regular.otf') format('opentype');font-weight:400;font-style:normal}
+@font-face{font-family:'F37 Zagma Arabic';src:url('fonts/ar/F37ZagmaArabicTrial-Bold.otf') format('opentype');font-weight:700;font-style:normal}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+:root {
+    --gold: #FAC752;
+    --gold-dim: rgba(250,199,82,.3);
+    --bg: #0a0a0a;
+    --bg2: #111;
+    --text: #f5f5f5;
+    --text-dim: rgba(255,255,255,.5);
+    --font-ar: 'F37 Zagma Arabic', sans-serif;
+    --font-en: 'Monument Extended', 'Inter', sans-serif;
+}
 
-        :root {
-            --primary: #18181B;
-            --secondary: #3F3F46;
-            --cta: #d6aa24;
-            --background: #09090B;
-            --text: #FAFAFA;
-            --accent: #d6aa24;
-        }
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-ar);background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;user-select:none;-webkit-font-smoothing:antialiased}
 
-        body {
-            font-family: 'F37 Zagma Arabic', 'Monument Extended', sans-serif;
-            background: var(--background);
-            color: var(--text);
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+/* CUSTOM CURSOR */
+.cursor{position:fixed;pointer-events:none;z-index:99999;mix-blend-mode:difference;will-change:transform}
+.cursor-dot{width:8px;height:8px;background:#fff;border-radius:50%;position:absolute;top:-4px;left:-4px;transition:transform .1s ease}
+.cursor-ring{width:40px;height:40px;border:1px solid rgba(255,255,255,.3);border-radius:50%;position:absolute;top:-20px;left:-20px;transition:all .4s cubic-bezier(.16,1,.3,1);transition-property:width,height,top,left,border-color}
+.cursor-ring.hover{width:70px;height:70px;top:-35px;left:-35px;border-color:var(--gold);background:rgba(250,199,82,.05)}
 
-        /* Loading Screen */
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--background);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
-        }
+/* LOADER */
+.loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99998;transition:opacity 1.2s ease,visibility 1.2s ease}
+.loader.hidden{opacity:0;visibility:hidden}
+.loader-logo img{width:160px;animation:loaderPulse 2s ease-in-out infinite}
+@keyframes loaderPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.95)}}
+.loader-glow{width:160px;height:2px;background:rgba(255,255,255,.1);margin-top:2.5rem;border-radius:4px;overflow:hidden;position:relative}
+.loader-glow::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:loaderShine 1.8s ease-in-out infinite}
+@keyframes loaderShine{0%{left:-100%}100%{left:100%}}
+.loader-text{font-family:var(--font-en);font-size:.7rem;letter-spacing:.4em;color:var(--text-dim);margin-top:1rem;text-transform:uppercase}
 
-        .loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+/* NAV */
+.nav{position:fixed;top:0;left:0;width:100%;padding:1.5rem 3rem;display:flex;justify-content:space-between;align-items:center;z-index:100;background:linear-gradient(180deg,rgba(10,10,10,.95),transparent);will-change:transform}
+.nav.scrolled{background:rgba(10,10,10,.98);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px)}
+.logo{position:relative;z-index:2}
+.logo img{height:60px;width:auto;display:block;transition:transform .3s ease}
+.logo:hover img{transform:scale(1.05)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{color:var(--text);text-decoration:none;font-family:var(--font-en);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;opacity:.6;transition:all .3s ease;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s ease}
+.nav-links a:hover{opacity:1}
+.nav-links a:hover::after{width:100%}
 
-        .loader-logo img {
-            width: 120px;
-            animation: pulse 2s ease-in-out infinite;
-        }
+/* HERO */
+.hero{position:relative;width:100%;height:100vh;overflow:hidden;background:var(--bg)}
+#hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
+.hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none}
+.hero-logo{pointer-events:none}
+.hero-logo img{width:clamp(120px,18vw,280px);opacity:0;transform:scale(.8)}
+.hero-title-line{width:clamp(60px,10vw,160px);height:1px;background:var(--gold);margin:2rem auto;opacity:0}
+.hero-sub{font-family:var(--font-en);font-size:clamp(.6rem,1vw,.85rem);letter-spacing:.6em;text-transform:uppercase;color:var(--text-dim);opacity:0}
+.hero-scroll{position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:.75rem;opacity:0}
+.hero-scroll span{font-family:var(--font-en);font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text-dim)}
+.hero-scroll-line{width:1px;height:50px;background:linear-gradient(180deg,var(--gold),transparent);animation:scrollBounce 2.5s ease-in-out infinite}
+@keyframes scrollBounce{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.4);opacity:.3}}
 
-        .loader-bar {
-            width: 200px;
-            height: 2px;
-            background: var(--secondary);
-            margin-top: 2rem;
-            border-radius: 2px;
-            overflow: hidden;
-        }
+/* SECTIONS */
+.section{position:relative;padding:8rem 3rem}
+.section-label{font-family:var(--font-en);font-size:.65rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem}
+.section-title{font-family:var(--font-en);font-size:clamp(1.5rem,3vw,3rem);font-weight:800;line-height:1.1;margin-bottom:1rem}
+.section-desc{font-size:1rem;color:var(--text-dim);max-width:500px;line-height:1.6}
 
-        .loader-progress {
-            width: 0%;
-            height: 100%;
-            background: var(--cta);
-            animation: load 2s ease-in-out forwards;
-        }
+/* ABOUT */
+.about{display:flex;flex-direction:column;align-items:center;text-align:center;padding:10rem 2rem;position:relative;overflow:hidden}
+.about::before{content:'';position:absolute;top:-30%;left:-20%;width:140%;height:80%;background:radial-gradient(ellipse at center,var(--gold-dim),transparent 70%);pointer-events:none;opacity:.3}
+.about-number{font-family:var(--font-en);font-size:clamp(5rem,15vw,12rem);font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(250,199,82,.15);position:absolute;top:2rem;left:50%;transform:translateX(-50%);pointer-events:none;line-height:1}
+.about-text{font-size:clamp(1rem,1.5vw,1.3rem);color:var(--text-dim);max-width:600px;line-height:1.8;position:relative;z-index:2}
 
-        @keyframes load {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
+/* WORKS GALLERY */
+.works{padding:0;position:relative}
+.works-header{padding:8rem 3rem 4rem;text-align:center;position:relative}
+.works-header::before{content:'DESIGNS';font-family:var(--font-en);font-size:clamp(4rem,12vw,10rem);font-weight:800;color:transparent;-webkit-text-stroke:1px rgba(250,199,82,.06);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+.gallery{display:flex;flex-direction:column;gap:0;padding:0}
+.gallery-item{width:100%;position:relative;overflow:hidden;cursor:pointer}
+.gallery-item img{width:100%;height:auto;display:block;will-change:transform;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}
+.gallery-item:hover img{transform:scale(1.02)}
+.gallery-item-overlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0;transition:opacity .6s ease;background:linear-gradient(180deg,transparent 50%,rgba(10,10,10,.8))}
+.gallery-item:hover .gallery-item-overlay{opacity:1}
+.gallery-item-num{position:absolute;top:2rem;left:2rem;font-family:var(--font-en);font-size:.65rem;letter-spacing:.2em;color:var(--text-dim);opacity:0;transform:translateY(-10px);transition:all .4s ease}
+.gallery-item:hover .gallery-item-num{opacity:1;transform:translateY(0)}
 
-        /* Navigation */
-        .nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 1.5rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: linear-gradient(to bottom, rgba(9, 9, 11, 0.9), transparent);
-        }
+.gallery-item-mask{position:absolute;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:2;pointer-events:none;transform:scaleX(1);transform-origin:right center}
 
-        .logo img {
-            height: 70px;
-            width: auto;
-            display: block;
-        }
+/* SOCIAL BAR */
+.social-bar{width:100%;padding:2rem 3rem;display:flex;justify-content:center;align-items:center;gap:2rem;border-top:1px solid rgba(255,255,255,.06);background:var(--bg);position:relative;z-index:10}
+.social-bar a{display:flex;align-items:center;justify-content:center;transition:all .4s cubic-bezier(.16,1,.3,1);filter:grayscale(1) brightness(.5);opacity:.5;position:relative}
+.social-bar a:hover{filter:grayscale(0) brightness(1);opacity:1;transform:translateY(-3px)}
+.social-bar a img{width:26px;height:26px;object-fit:contain}
+.social-divider{width:1px;height:18px;background:rgba(255,255,255,.08)}
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
+/* FOOTER SPACER */
+.footer-spacer{height:2rem}
 
-        .nav-links a {
-            color: var(--text);
-            text-decoration: none;
-            font-family: 'F37 Zagma Arabic', sans-serif;
-            font-size: 0.875rem;
-            letter-spacing: 0.1em;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
+/* RESPONSIVE */
+@media(max-width:768px){
+.nav{padding:1rem 1.5rem}
+.logo img{height:42px}
+.nav-links{display:none}
+.section{padding:5rem 1.5rem}
+.about{padding:6rem 1.5rem}
+.works-header{padding:5rem 1.5rem 3rem}
+.social-bar{padding:1.5rem;gap:1.25rem}
+.social-bar a img{width:22px;height:22px}
+}
 
-        .nav-links a:hover {
-            opacity: 1;
-        }
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
 
-        /* Progress Bar */
-        .progress-container {
-            position: fixed;
-            top: 50%;
-            right: 2rem;
-            transform: translateY(-50%);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .progress-line {
-            width: 2px;
-            height: 100px;
-            background: var(--secondary);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            width: 100%;
-            height: 0%;
-            background: var(--cta);
-            transition: height 0.3s ease;
-        }
-
-        .progress-text {
-            font-family: 'Monument Extended', sans-serif;
-            font-size: 0.75rem;
-            color: var(--text);
-            opacity: 0.5;
-        }
-
-        /* Hero - 01.png at native resolution, no crop, no resample */
-        .hero {
-            width: 100%;
-            position: relative;
-            background: var(--background);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .hero img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .scroll-indicator {
-            position: absolute;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            animation: bounce 2s ease-in-out infinite;
-            z-index: 10;
-        }
-
-        .scroll-line {
-            width: 1px;
-            height: 60px;
-            background: linear-gradient(to bottom, var(--text), transparent);
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
-        }
-
-        /* Presentation - Full width images, no frames, no resample */
-        .presentation {
-            position: relative;
-        }
-
-        .slide {
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            scroll-snap-align: start;
-        }
-
-        .slide img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        /* Fade in animation - only opacity, no transform to avoid resample */
-        .slide-content {
-            opacity: 0;
-            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .slide-content.visible {
-            opacity: 1;
-        }
-
-        /* Controls */
-        .controls {
-            position: fixed;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 1rem;
-            z-index: 1000;
-        }
-
-        .control-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 1px solid var(--secondary);
-            background: rgba(9, 9, 11, 0.8);
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .control-btn:hover {
-            background: var(--cta);
-            border-color: var(--cta);
-            transform: scale(1.1);
-        }
-
-        .control-btn.active {
-            background: var(--cta);
-            border-color: var(--cta);
-        }
-
-        /* Social Bar */
-        .social-bar {
-            width: 100%;
-            padding: 2rem 3rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            background: var(--background);
-            position: relative;
-            z-index: 10;
-        }
-
-        .social-bar a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            filter: grayscale(100%) brightness(0.7);
-            opacity: 0.5;
-        }
-
-        .social-bar a:hover {
-            filter: grayscale(0%) brightness(1);
-            opacity: 1;
-            transform: translateY(-2px);
-        }
-
-        .social-bar a img {
-            width: 28px;
-            height: 28px;
-            object-fit: contain;
-        }
-
-        .social-divider {
-            width: 1px;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 1rem 1.5rem;
-            }
-
-            .logo img {
-                height: 50px;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .progress-container {
-                right: 1rem;
-            }
-
-            .controls {
-                bottom: 1.5rem;
-            }
-
-            .control-btn {
-                width: 40px;
-                height: 40px;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--background);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--cta);
-            border-radius: 2px;
-        }
-    </style>
+/* LENIS OVERRIDE */
+html.lenis{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+</style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loader" id="loader">
-        <div class="loader-logo">
-            <img src="stvxlogo.png" alt="STVX">
-        </div>
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
-        </div>
-    </div>
 
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="logo">
-            <img src="stvxlogo.png" alt="STVX">
-        </div>
-        <ul class="nav-links">
-            <li><a href="#home">الرئيسية</a></li>
-            <li><a href="#work">الأعمال</a></li>
-            <li><a href="#contact">تواصل</a></li>
-        </ul>
-    </nav>
+<!-- CURSOR -->
+<div class="cursor" id="cursor">
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+</div>
 
-    <!-- Progress Indicator -->
-    <div class="progress-container">
-        <div class="progress-line">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <span class="progress-text" id="progressText">01/38</span>
-    </div>
+<!-- LOADER -->
+<div class="loader" id="loader">
+<div class="loader-logo"><img src="stvxlogo.png" alt="STVX"></div>
+<div class="loader-glow"></div>
+<div class="loader-text">Loading Experience</div>
+</div>
 
-    <!-- Controls -->
-    <div class="controls">
-        <button class="control-btn" id="prevBtn" aria-label="Previous">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M15 18l-6-6 6-6"/>
-            </svg>
-        </button>
-        <button class="control-btn" id="playBtn" aria-label="Play/Pause">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="5 3 19 12 5 21 5 3"/>
-            </svg>
-        </button>
-        <button class="control-btn" id="nextBtn" aria-label="Next">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
-            </svg>
-        </button>
-    </div>
+<!-- NAV -->
+<nav class="nav" id="nav">
+<div class="logo"><img src="stvxlogo.png" alt="STVX"></div>
+<ul class="nav-links">
+<li><a href="#work" data-cursor>الأعمال</a></li>
+<li><a href="#about" data-cursor>عني</a></li>
+<li><a href="#contact" data-cursor>تواصل</a></li>
+</ul>
+</nav>
 
-    <!-- Hero - 01.png at native resolution -->
-    <section class="hero" id="home">
-        <div class="slide-content visible">
-            <img src="01.png" alt="Design 01">
-        </div>
-        <div class="scroll-indicator">
-            <div class="scroll-line"></div>
-        </div>
-    </section>
+<!-- HERO -->
+<section class="hero" id="home">
+<canvas id="hero-canvas"></canvas>
+<div class="hero-overlay">
+<div class="hero-logo" id="heroLogo"><img src="stvxlogo.png" alt="STVX"></div>
+<div class="hero-title-line" id="heroLine"></div>
+<div class="hero-sub" id="heroSub">Creative Design Portfolio</div>
+</div>
+<div class="hero-scroll" id="heroScroll">
+<span>Scroll</span>
+<div class="hero-scroll-line"></div>
+</div>
+</section>
 
-    <!-- Designs 02-38 -->
-    <div class="presentation" id="work">
-        <div class="slide" data-slide="2">
-            <div class="slide-content">
-                <img src="02.png" alt="Design 02">
-            </div>
-        </div>
-        <div class="slide" data-slide="3">
-            <div class="slide-content">
-                <img src="03.png" alt="Design 03">
-            </div>
-        </div>
-        <div class="slide" data-slide="4">
-            <div class="slide-content">
-                <img src="04.png" alt="Design 04">
-            </div>
-        </div>
-        <div class="slide" data-slide="5">
-            <div class="slide-content">
-                <img src="05.png" alt="Design 05">
-            </div>
-        </div>
-        <div class="slide" data-slide="6">
-            <div class="slide-content">
-                <img src="06.png" alt="Design 06">
-            </div>
-        </div>
-        <div class="slide" data-slide="7">
-            <div class="slide-content">
-                <img src="07.png" alt="Design 07">
-            </div>
-        </div>
-        <div class="slide" data-slide="8">
-            <div class="slide-content">
-                <img src="08.png" alt="Design 08">
-            </div>
-        </div>
-        <div class="slide" data-slide="9">
-            <div class="slide-content">
-                <img src="09.png" alt="Design 09">
-            </div>
-        </div>
-        <div class="slide" data-slide="10">
-            <div class="slide-content">
-                <img src="10.png" alt="Design 10">
-            </div>
-        </div>
-        <div class="slide" data-slide="11">
-            <div class="slide-content">
-                <img src="11.png" alt="Design 11">
-            </div>
-        </div>
-        <div class="slide" data-slide="12">
-            <div class="slide-content">
-                <img src="12.png" alt="Design 12">
-            </div>
-        </div>
-        <div class="slide" data-slide="13">
-            <div class="slide-content">
-                <img src="13.png" alt="Design 13">
-            </div>
-        </div>
-        <div class="slide" data-slide="14">
-            <div class="slide-content">
-                <img src="14.png" alt="Design 14">
-            </div>
-        </div>
-        <div class="slide" data-slide="15">
-            <div class="slide-content">
-                <img src="15.png" alt="Design 15">
-            </div>
-        </div>
-        <div class="slide" data-slide="16">
-            <div class="slide-content">
-                <img src="16.png" alt="Design 16">
-            </div>
-        </div>
-        <div class="slide" data-slide="17">
-            <div class="slide-content">
-                <img src="17.png" alt="Design 17">
-            </div>
-        </div>
-        <div class="slide" data-slide="18">
-            <div class="slide-content">
-                <img src="18.png" alt="Design 18">
-            </div>
-        </div>
-        <div class="slide" data-slide="19">
-            <div class="slide-content">
-                <img src="19.png" alt="Design 19">
-            </div>
-        </div>
-        <div class="slide" data-slide="20">
-            <div class="slide-content">
-                <img src="20.png" alt="Design 20">
-            </div>
-        </div>
-        <div class="slide" data-slide="21">
-            <div class="slide-content">
-                <img src="21.png" alt="Design 21">
-            </div>
-        </div>
-        <div class="slide" data-slide="22">
-            <div class="slide-content">
-                <img src="22.png" alt="Design 22">
-            </div>
-        </div>
-        <div class="slide" data-slide="23">
-            <div class="slide-content">
-                <img src="23.png" alt="Design 23">
-            </div>
-        </div>
-        <div class="slide" data-slide="24">
-            <div class="slide-content">
-                <img src="24.png" alt="Design 24">
-            </div>
-        </div>
-        <div class="slide" data-slide="25">
-            <div class="slide-content">
-                <img src="25.png" alt="Design 25">
-            </div>
-        </div>
-        <div class="slide" data-slide="26">
-            <div class="slide-content">
-                <img src="26.png" alt="Design 26">
-            </div>
-        </div>
-        <div class="slide" data-slide="27">
-            <div class="slide-content">
-                <img src="27.png" alt="Design 27">
-            </div>
-        </div>
-        <div class="slide" data-slide="28">
-            <div class="slide-content">
-                <img src="28.png" alt="Design 28">
-            </div>
-        </div>
-        <div class="slide" data-slide="29">
-            <div class="slide-content">
-                <img src="29.png" alt="Design 29">
-            </div>
-        </div>
-        <div class="slide" data-slide="30">
-            <div class="slide-content">
-                <img src="30.png" alt="Design 30">
-            </div>
-        </div>
-        <div class="slide" data-slide="31">
-            <div class="slide-content">
-                <img src="31.png" alt="Design 31">
-            </div>
-        </div>
-        <div class="slide" data-slide="32">
-            <div class="slide-content">
-                <img src="32.png" alt="Design 32">
-            </div>
-        </div>
-        <div class="slide" data-slide="33">
-            <div class="slide-content">
-                <img src="33.png" alt="Design 33">
-            </div>
-        </div>
-        <div class="slide" data-slide="34">
-            <div class="slide-content">
-                <img src="34.png" alt="Design 34">
-            </div>
-        </div>
-        <div class="slide" data-slide="35">
-            <div class="slide-content">
-                <img src="35.png" alt="Design 35">
-            </div>
-        </div>
-        <div class="slide" data-slide="36">
-            <div class="slide-content">
-                <img src="36.png" alt="Design 36">
-            </div>
-        </div>
-        <div class="slide" data-slide="37">
-            <div class="slide-content">
-                <img src="37.png" alt="Design 37">
-            </div>
-        </div>
-        <div class="slide" data-slide="38">
-            <div class="slide-content">
-                <img src="38.png" alt="Design 38">
-            </div>
-        </div>
-    </div>
+<!-- ABOUT -->
+<section class="about" id="about">
+<div class="about-number">STVX</div>
+<div class="section-label" data-reveal>About</div>
+<h2 class="section-title" data-reveal>Where Vision Meets<br>Craft</h2>
+<p class="about-text" data-reveal>A creative studio built at the intersection of design, technology, and motion. Every pixel is intentional. Every interaction tells a story. We don't just build interfaces — we craft experiences that leave a lasting impression.</p>
+</section>
 
-    <!-- Social Bar -->
-    <div class="social-bar" id="contact">
-        <a href="mailto:faroukkir01@gmail.com" aria-label="Email">
-            <img src="icons/email.png" alt="Email">
-        </a>
-        <div class="social-divider"></div>
-        <a href="https://x.com/iistevexn" target="_blank" rel="noopener noreferrer" aria-label="X">
-            <img src="icons/x.png" alt="X">
-        </a>
-        <div class="social-divider"></div>
-        <a href="https://www.instagram.com/stvx.jpg/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-            <img src="icons/instagram.png" alt="Instagram">
-        </a>
-        <div class="social-divider"></div>
-        <a href="https://www.facebook.com/iiStevexn/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <img src="icons/facebook.png" alt="Facebook">
-        </a>
-        <div class="social-divider"></div>
-        <a href="https://www.behance.net/stvx" target="_blank" rel="noopener noreferrer" aria-label="Behance">
-            <img src="icons/behance.png" alt="Behance">
-        </a>
-        <div class="social-divider"></div>
-        <a href="https://wa.me/213778789684" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-            <img src="icons/whatsapp.png" alt="WhatsApp">
-        </a>
-    </div>
+<!-- WORKS -->
+<section class="works" id="work">
+<div class="works-header">
+<div class="section-label" data-reveal>Portfolio</div>
+<h2 class="section-title" data-reveal>Selected Works</h2>
+</div>
+<div class="gallery" id="gallery"></div>
+</section>
 
-    <script>
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader').classList.add('hidden');
-            }, 2500);
+<!-- SOCIAL BAR -->
+<div class="social-bar" id="contact">
+<a href="mailto:faroukkir01@gmail.com" target="_blank" rel="noopener noreferrer" aria-label="Email" data-cursor><img src="icons/email.png" alt="Email"></a>
+<div class="social-divider"></div>
+<a href="https://x.com/iistevexn" target="_blank" rel="noopener noreferrer" aria-label="X" data-cursor><img src="icons/x.png" alt="X"></a>
+<div class="social-divider"></div>
+<a href="https://www.instagram.com/stvx.jpg/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" data-cursor><img src="icons/instagram.png" alt="Instagram"></a>
+<div class="social-divider"></div>
+<a href="https://www.facebook.com/iiStevexn/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" data-cursor><img src="icons/facebook.png" alt="Facebook"></a>
+<div class="social-divider"></div>
+<a href="https://www.behance.net/stvx" target="_blank" rel="noopener noreferrer" aria-label="Behance" data-cursor><img src="icons/behance.png" alt="Behance"></a>
+<div class="social-divider"></div>
+<a href="https://wa.me/213778789684" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" data-cursor><img src="icons/whatsapp.png" alt="WhatsApp"></a>
+</div>
+<div class="footer-spacer"></div>
+
+<script>
+/* ============================================================
+   LOADER
+   ============================================================ */
+window.addEventListener('load', () => {
+    setTimeout(() => { document.getElementById('loader').classList.add('hidden'); }, 2800);
+});
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+const cursor = document.getElementById('cursor');
+const dot = document.getElementById('cursorDot');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, ringX = 0, ringY = 0;
+
+document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = `translate(${mx}px, ${my}px)`;
+});
+
+function animateCursor() {
+    ringX += (mx - ringX) * .15;
+    ringY += (my - ringY) * .15;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+    requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+document.querySelectorAll('[data-cursor]').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+});
+document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
+
+/* ============================================================
+   THREE.JS — HERO WEBGL BACKGROUND
+   ============================================================ */
+(function initHero() {
+    const canvas = document.getElementById('hero-canvas');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, .1, 1000);
+    camera.position.z = 30;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // PARTICLES
+    const count = 4000;
+    const positions = new Float32Array(count * 3);
+    const sizes = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+        positions[i*3] = (Math.random() - .5) * 80;
+        positions[i*3+1] = (Math.random() - .5) * 80;
+        positions[i*3+2] = (Math.random() - .5) * 40 - 10;
+        sizes[i] = Math.random() * 3 + .5;
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+    const mat = new THREE.PointsMaterial({
+        color: 0xFAC752,
+        size: .08,
+        transparent: true,
+        opacity: .6,
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true,
+    });
+
+    const particles = new THREE.Points(geo, mat);
+    scene.add(particles);
+
+    // FLOATING ORBS
+    const orbGroup = new THREE.Group();
+    for (let i = 0; i < 5; i++) {
+        const r = .8 + Math.random() * 1.5;
+        const orbGeo = new THREE.SphereGeometry(r, 32, 32);
+        const orbMat = new THREE.MeshBasicMaterial({
+            color: 0xFAC752,
+            transparent: true,
+            opacity: .03 + Math.random() * .04,
+        });
+        const orb = new THREE.Mesh(orbGeo, orbMat);
+        orb.position.set(
+            (Math.random() - .5) * 30,
+            (Math.random() - .5) * 20,
+            (Math.random() - .5) * 20 - 5
+        );
+        orb.userData = {
+            speedX: (Math.random() - .5) * .005,
+            speedY: (Math.random() - .5) * .005,
+            phase: Math.random() * Math.PI * 2,
+        };
+        orbGroup.add(orb);
+    }
+    scene.add(orbGroup);
+
+    // MOUSE TRACKING
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
+    document.addEventListener('mousemove', e => {
+        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // AMBIENT LIGHT RAYS
+    const rayGeo = new THREE.PlaneGeometry(60, 30);
+    const rayMat = new THREE.MeshBasicMaterial({
+        color: 0xFAC752,
+        transparent: true,
+        opacity: .02,
+        side: THREE.DoubleSide,
+    });
+    const ray = new THREE.Mesh(rayGeo, rayMat);
+    ray.position.z = -15;
+    ray.rotation.x = .3;
+    ray.rotation.z = .2;
+    scene.add(ray);
+
+    // ANIMATION LOOP
+    function animateHero() {
+        targetX += (mouseX - targetX) * .02;
+        targetY += (mouseY - targetY) * .02;
+
+        particles.rotation.x += (targetY * .005 - particles.rotation.x) * .02;
+        particles.rotation.y += (targetX * .005 - particles.rotation.y) * .02;
+
+        orbGroup.children.forEach((orb, i) => {
+            orb.position.x += Math.sin(Date.now() * orb.userData.speedX + orb.userData.phase) * .003;
+            orb.position.y += Math.cos(Date.now() * orb.userData.speedY + orb.userData.phase) * .003;
         });
 
-        const slides = document.querySelectorAll('.slide');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        let currentSlide = 1;
-        let isPlaying = false;
-        let playInterval;
-        let scrollTimeout;
+        ray.rotation.z += .0003;
+        ray.material.opacity = .015 + Math.sin(Date.now() * .0005) * .01;
 
-        const slideObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.querySelector('.slide-content').classList.add('visible');
-                    const slideNum = parseInt(entry.target.dataset.slide);
-                    currentSlide = slideNum;
-                    updateProgress(slideNum);
-                }
+        renderer.render(scene, camera);
+        requestAnimationFrame(animateHero);
+    }
+    animateHero();
+
+    // RESIZE
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
+
+/* ============================================================
+   LENIS — SMOOTH SCROLL
+   ============================================================ */
+const lenis = new Lenis({
+    duration: 1.8,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: .8,
+    touchMultiplier: 1.5,
+});
+
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => lenis.raf(time * 1000));
+gsap.ticker.lagSmoothing(0);
+
+/* ============================================================
+   GSAP — HERO ANIMATIONS
+   ============================================================ */
+gsap.to('#heroLogo img', { opacity: 1, scale: 1, duration: 1.5, delay: .3, ease: 'power3.out' });
+gsap.to('#heroLine', { opacity: 1, scaleX: 1, duration: 1, delay: .8, ease: 'power3.out' });
+gsap.to('#heroSub', { opacity: 1, y: 0, duration: 1, delay: 1.2, ease: 'power3.out' });
+gsap.to('#heroScroll', { opacity: 1, duration: 1, delay: 1.8, ease: 'power2.out' });
+
+/* ============================================================
+   GSAP — NAV
+   ============================================================ */
+ScrollTrigger.create({
+    start: 'top -80',
+    onEnter: () => document.getElementById('nav').classList.add('scrolled'),
+    onLeaveBack: () => document.getElementById('nav').classList.remove('scrolled'),
+});
+
+/* ============================================================
+   GSAP — REVEAL ANIMATIONS
+   ============================================================ */
+document.querySelectorAll('[data-reveal]').forEach(el => {
+    gsap.from(el, {
+        y: 60,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse',
+        },
+    });
+});
+
+/* ============================================================
+   GALLERY — 38 DESIGNS
+   ============================================================ */
+(function buildGallery() {
+    const container = document.getElementById('gallery');
+    for (let i = 1; i <= 38; i++) {
+        const num = String(i).padStart(2, '0');
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.setAttribute('data-cursor', '');
+        item.innerHTML = `
+            <span class="gallery-item-num">${num}/${38}</span>
+            <img src="${num}.png" alt="Design ${num}" loading="lazy">
+            <div class="gallery-item-overlay"></div>
+            <div class="gallery-item-mask"></div>
+        `;
+        container.appendChild(item);
+
+        // GSAP REVEAL
+        const mask = item.querySelector('.gallery-item-mask');
+        const img = item.querySelector('img');
+        gsap.to(mask, {
+            scaleX: 0,
+            duration: 1.4,
+            ease: 'power3.inOut',
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 80%',
+                toggleActions: 'play none none reverse',
+            },
+        });
+        gsap.fromTo(img, {
+            scale: 1.1,
+        }, {
+            scale: 1,
+            duration: 1.6,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: item,
+                start: 'top 80%',
+                toggleActions: 'play none none reverse',
+            },
+        });
+    }
+
+    // HOVER PARALLAX ON GALLERY ITEMS
+    document.querySelectorAll('.gallery-item').forEach(item => {
+        item.addEventListener('mousemove', e => {
+            const rect = item.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - .5;
+            const y = (e.clientY - rect.top) / rect.height - .5;
+            const img = item.querySelector('img');
+            gsap.to(img, {
+                x: x * 20,
+                y: y * 10,
+                duration: .8,
+                ease: 'power2.out',
             });
-        }, { threshold: 0.5 });
-
-        slides.forEach(slide => slideObserver.observe(slide));
-
-        function updateProgress(num) {
-            const percent = (num / 38) * 100;
-            progressFill.style.height = percent + '%';
-            progressText.textContent = String(num).padStart(2, '0') + '/38';
-        }
-
-        function smoothScrollTo(element, duration) {
-            const targetY = element.getBoundingClientRect().top + window.pageYOffset;
-            const startY = window.pageYOffset;
-            const distance = targetY - startY;
-            const startTime = performance.now();
-
-            function easeInOutCubic(t) {
-                return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-            }
-
-            function step(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const eased = easeInOutCubic(progress);
-                window.scrollTo(0, startY + distance * eased);
-                if (progress < 1) {
-                    requestAnimationFrame(step);
-                }
-            }
-
-            requestAnimationFrame(step);
-        }
-
-        function scrollToSlide(num) {
-            let target;
-            if (num === 0) {
-                smoothScrollTo(document.querySelector('.hero'), 1200);
-                return;
-            }
-            target = document.querySelector(`[data-slide="${num}"]`);
-            if (target) smoothScrollTo(target, 1200);
-        }
-
-        document.getElementById('prevBtn').addEventListener('click', () => {
-            if (currentSlide > 2) scrollToSlide(currentSlide - 1);
-            else scrollToSlide(0);
         });
-
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            if (currentSlide < 38) scrollToSlide(currentSlide + 1);
+        item.addEventListener('mouseleave', () => {
+            const img = item.querySelector('img');
+            gsap.to(img, { x: 0, y: 0, duration: 1, ease: 'power2.out' });
         });
+    });
+})();
 
-        document.getElementById('playBtn').addEventListener('click', function() {
-            isPlaying = !isPlaying;
-            this.classList.toggle('active');
-            if (isPlaying) {
-                this.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
-                playInterval = setInterval(() => {
-                    if (currentSlide < 38) scrollToSlide(currentSlide + 1);
-                    else scrollToSlide(2);
-                }, 4000);
-            } else {
-                this.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
-                clearInterval(playInterval);
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                if (currentSlide < 38) scrollToSlide(currentSlide + 1);
-            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                e.preventDefault();
-                if (currentSlide > 2) scrollToSlide(currentSlide - 1);
-                else scrollToSlide(0);
-            } else if (e.key === ' ') {
-                e.preventDefault();
-                document.getElementById('playBtn').click();
-            }
-        });
-    </script>
+/* ============================================================
+   PREVENT RIGHT CLICK
+   ============================================================ */
+document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
 </body>
 </html>
