@@ -4,7 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>STVX — Creative Experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://unpkg.com">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <style>
+@font-face {
+  font-family: 'F37 Zagma Arabic';
+  src: url('fonts/ar/F37ZagmaArabicTrial-Regular.otf') format('opentype');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'F37 Zagma Arabic';
+  src: url('fonts/ar/F37ZagmaArabicTrial-Bold.otf') format('opentype');
+  font-weight: 700;
+}
+@font-face {
+  font-family: 'F37 Zagma Arabic';
+  src: url('fonts/ar/F37ZagmaArabicTrial-Light.otf') format('opentype');
+  font-weight: 300;
+}
 :root {
   --gold: #FAC752;
   --bg: #050505;
@@ -325,10 +344,32 @@ nav.hidden-nav { transform: translateY(-120%); }
 /* ===== CONTACT ===== */
 .contact {
   position: relative; z-index: 10;
-  padding: 120px 3rem 50px;
-  text-align: center;
+  padding: 120px 3rem 60px;
+}
+.contact-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 4.5rem;
+  align-items: start;
+}
+.contact-info h2 {
+  font-family: 'F37 Zagma Arabic', 'Inter', -apple-system, sans-serif;
+  font-size: clamp(1.8rem, 3.6vw, 2.9rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 1.4rem;
+}
+.contact-info h2 .gold { color: var(--gold); }
+.contact-info .contact-desc {
+  font-size: .8rem;
+  line-height: 2;
+  color: var(--dim);
+  max-width: 34rem;
 }
 .contact-email {
+  display: inline-block;
   font-size: clamp(.75rem, 1.5vw, 1rem);
   color: var(--dim);
   letter-spacing: .06em;
@@ -336,11 +377,11 @@ nav.hidden-nav { transform: translateY(-120%); }
 }
 .contact-email:hover { color: var(--gold); }
 .contact-social {
-  display: flex; justify-content: center; gap: 1.8rem;
-  margin-top: 2.8rem;
+  display: flex; gap: 1.2rem;
+  margin-top: 2.6rem;
 }
 .contact-social a {
-  width: 34px; height: 34px;
+  width: 38px; height: 38px;
   display: flex; align-items: center; justify-content: center;
   border: 1px solid rgba(255,255,255,.05);
   border-radius: 50%;
@@ -351,11 +392,124 @@ nav.hidden-nav { transform: translateY(-120%); }
   box-shadow: 0 0 25px rgba(250,199,82,.06);
 }
 .contact-social img {
-  width: 14px; height: 14px;
+  width: 15px; height: 15px;
   opacity: .4;
   transition: opacity .3s;
 }
 .contact-social a:hover img { opacity: 1; }
+
+/* CONTACT FORM */
+.contact-form-wrap {
+  position: relative;
+}
+.contact-form {
+  display: flex; flex-direction: column;
+  gap: 1.3rem;
+  padding: 2.4rem;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 20px;
+  backdrop-filter: blur(14px);
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-field {
+  display: flex; flex-direction: column; gap: .55rem;
+}
+.form-field label {
+  font-size: .55rem; letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+.form-field label .req { color: var(--gold); }
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: .85rem 1.1rem;
+  color: var(--text);
+  font-size: .8rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .35s ease, background .35s ease, box-shadow .35s ease;
+}
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: rgba(255,255,255,.2);
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: rgba(250,199,82,.45);
+  background: rgba(250,199,82,.04);
+  box-shadow: 0 0 0 3px rgba(250,199,82,.08);
+}
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23FAC752' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.1rem center;
+  padding-right: 2.6rem;
+}
+.form-select option {
+  background: #0d0d0d;
+  color: var(--text);
+}
+.form-textarea {
+  resize: vertical;
+  min-height: 130px;
+  line-height: 1.9;
+}
+.form-submit {
+  margin-top: .3rem;
+  padding: 1rem 1.9rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #0a0a0a;
+  font-family: inherit;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  cursor: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), opacity .3s;
+}
+.form-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 50px rgba(250,199,82,.22);
+}
+.form-submit:active { transform: translateY(0); }
+.form-submit:disabled {
+  opacity: .55;
+  transform: none;
+  box-shadow: none;
+  cursor: none;
+}
+.form-status {
+  font-size: .72rem;
+  line-height: 1.7;
+  min-height: 1.7em;
+  margin-top: -.4rem;
+  opacity: 0;
+  transition: opacity .4s ease;
+}
+.form-status.visible { opacity: 1; }
+.form-status.success { color: #7ee08a; }
+.form-status.error { color: #ff8f6b; }
+.form-status.info { color: var(--dim); }
+.contact-cta-links {
+  display: flex; align-items: center; gap: 1.2rem;
+  margin-top: 1.2rem;
+}
 
 /* FOOTER */
 .footer-bar {
@@ -371,6 +525,9 @@ nav.hidden-nav { transform: translateY(-120%); }
 
 @media(max-width: 768px) {
   .contact { padding: 70px 1.4rem 40px; }
+  .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .contact-form { padding: 1.6rem; }
   .footer-bar { padding: 18px 1.4rem; }
 }
 </style>
@@ -442,55 +599,127 @@ nav.hidden-nav { transform: translateY(-120%); }
 
 <!-- WORKS -->
 <div class="works" id="works">
-  <div class="slide"><img src="01.png" alt="01" loading="lazy"></div>
-  <div class="slide"><img src="02.png" alt="02" loading="lazy"></div>
-  <div class="slide"><img src="03.png" alt="03" loading="lazy"></div>
-  <div class="slide"><img src="04.png" alt="04" loading="lazy"></div>
-  <div class="slide"><img src="05.png" alt="05" loading="lazy"></div>
-  <div class="slide"><img src="06.png" alt="06" loading="lazy"></div>
-  <div class="slide"><img src="07.png" alt="07" loading="lazy"></div>
-  <div class="slide"><img src="08.png" alt="08" loading="lazy"></div>
-  <div class="slide"><img src="09.png" alt="09" loading="lazy"></div>
-  <div class="slide"><img src="10.png" alt="10" loading="lazy"></div>
-  <div class="slide"><img src="11.png" alt="11" loading="lazy"></div>
-  <div class="slide"><img src="12.png" alt="12" loading="lazy"></div>
-  <div class="slide"><img src="13.png" alt="13" loading="lazy"></div>
-  <div class="slide"><img src="14.png" alt="14" loading="lazy"></div>
-  <div class="slide"><img src="15.png" alt="15" loading="lazy"></div>
-  <div class="slide"><img src="16.png" alt="16" loading="lazy"></div>
-  <div class="slide"><img src="17.png" alt="17" loading="lazy"></div>
-  <div class="slide"><img src="18.png" alt="18" loading="lazy"></div>
-  <div class="slide"><img src="19.png" alt="19" loading="lazy"></div>
-  <div class="slide"><img src="20.png" alt="20" loading="lazy"></div>
-  <div class="slide"><img src="21.png" alt="21" loading="lazy"></div>
-  <div class="slide"><img src="22.png" alt="22" loading="lazy"></div>
-  <div class="slide"><img src="23.png" alt="23" loading="lazy"></div>
-  <div class="slide"><img src="24.png" alt="24" loading="lazy"></div>
-  <div class="slide"><img src="25.png" alt="25" loading="lazy"></div>
-  <div class="slide"><img src="26.png" alt="26" loading="lazy"></div>
-  <div class="slide"><img src="27.png" alt="27" loading="lazy"></div>
-  <div class="slide"><img src="28.png" alt="28" loading="lazy"></div>
-  <div class="slide"><img src="29.png" alt="29" loading="lazy"></div>
-  <div class="slide"><img src="30.png" alt="30" loading="lazy"></div>
-  <div class="slide"><img src="31.png" alt="31" loading="lazy"></div>
-  <div class="slide"><img src="32.png" alt="32" loading="lazy"></div>
-  <div class="slide"><img src="33.png" alt="33" loading="lazy"></div>
-  <div class="slide"><img src="34.png" alt="34" loading="lazy"></div>
-  <div class="slide"><img src="35.png" alt="35" loading="lazy"></div>
-  <div class="slide"><img src="36.png" alt="36" loading="lazy"></div>
-  <div class="slide"><img src="37.png" alt="37" loading="lazy"></div>
-  <div class="slide"><img src="38.png" alt="38" loading="lazy"></div>
+  <div class="slide"><img src="01.png" alt="01"></div>
+  <div class="slide"><img src="02.png" alt="02"></div>
+  <div class="slide"><img src="03.png" alt="03"></div>
+  <div class="slide"><img src="04.png" alt="04"></div>
+  <div class="slide"><img src="05.png" alt="05"></div>
+  <div class="slide"><img src="06.png" alt="06"></div>
+  <div class="slide"><img src="07.png" alt="07"></div>
+  <div class="slide"><img src="08.png" alt="08"></div>
+  <div class="slide"><img src="09.png" alt="09"></div>
+  <div class="slide"><img src="10.png" alt="10"></div>
+  <div class="slide"><img src="11.png" alt="11"></div>
+  <div class="slide"><img src="12.png" alt="12"></div>
+  <div class="slide"><img src="13.png" alt="13"></div>
+  <div class="slide"><img src="14.png" alt="14"></div>
+  <div class="slide"><img src="15.png" alt="15"></div>
+  <div class="slide"><img src="16.png" alt="16"></div>
+  <div class="slide"><img src="17.png" alt="17"></div>
+  <div class="slide"><img src="18.png" alt="18"></div>
+  <div class="slide"><img src="19.png" alt="19"></div>
+  <div class="slide"><img src="20.png" alt="20"></div>
+  <div class="slide"><img src="21.png" alt="21"></div>
+  <div class="slide"><img src="22.png" alt="22"></div>
+  <div class="slide"><img src="23.png" alt="23"></div>
+  <div class="slide"><img src="24.png" alt="24"></div>
+  <div class="slide"><img src="25.png" alt="25"></div>
+  <div class="slide"><img src="26.png" alt="26"></div>
+  <div class="slide"><img src="27.png" alt="27"></div>
+  <div class="slide"><img src="28.png" alt="28"></div>
+  <div class="slide"><img src="29.png" alt="29"></div>
+  <div class="slide"><img src="30.png" alt="30"></div>
+  <div class="slide"><img src="31.png" alt="31"></div>
+  <div class="slide"><img src="32.png" alt="32"></div>
+  <div class="slide"><img src="33.png" alt="33"></div>
+  <div class="slide"><img src="34.png" alt="34"></div>
+  <div class="slide"><img src="35.png" alt="35"></div>
+  <div class="slide"><img src="36.png" alt="36"></div>
+  <div class="slide"><img src="37.png" alt="37"></div>
+  <div class="slide"><img src="38.png" alt="38"></div>
 </div>
 
 <!-- CONTACT -->
 <section class="contact" id="contact">
-  <a href="mailto:faroukkir01@gmail.com" class="contact-email">faroukkir01@gmail.com</a>
-  <div class="contact-social">
-    <a href="https://x.com/iistevexn" target="_blank" rel="noreferrer" data-magnetic><img src="icons/x.png" alt="X"></a>
-    <a href="https://instagram.com/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/instagram.png" alt="Instagram"></a>
-    <a href="https://behance.net/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/behance.png" alt="Behance"></a>
-    <a href="https://facebook.com/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/facebook.png" alt="Facebook"></a>
-    <a href="https://wa.me/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/whatsapp.png" alt="WhatsApp"></a>
+  <div class="contact-inner">
+    <div class="contact-info" dir="rtl" lang="ar">
+      <h2>خلّنا نبدأ <span class="gold">مشروعك</span></h2>
+      <p class="contact-desc">أخبرني عن فكرتك، وسأحوّلها إلى تجربة رقمية لا تُنسى. املأ النموذج وسأتواصل معك قريبًا.</p>
+      <div class="contact-cta-links">
+        <a href="mailto:faroukkir01@gmail.com" class="contact-email">faroukkir01@gmail.com</a>
+      </div>
+      <div class="contact-social">
+        <a href="https://x.com/iistevexn" target="_blank" rel="noreferrer" data-magnetic><img src="icons/x.png" alt="X"></a>
+        <a href="https://instagram.com/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/instagram.png" alt="Instagram"></a>
+        <a href="https://behance.net/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/behance.png" alt="Behance"></a>
+        <a href="https://facebook.com/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/facebook.png" alt="Facebook"></a>
+        <a href="https://wa.me/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/whatsapp.png" alt="WhatsApp"></a>
+      </div>
+    </div>
+
+    <div class="contact-form-wrap" dir="rtl" lang="ar">
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cf-name">الاسم <span class="req">*</span></label>
+            <input type="text" id="cf-name" name="name" class="form-input" placeholder="اسمك الكامل" maxlength="80" required>
+          </div>
+          <div class="form-field">
+            <label for="cf-email">البريد الإلكتروني <span class="req">*</span></label>
+            <input type="email" id="cf-email" name="email" class="form-input" placeholder="example@email.com" maxlength="120" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cf-phone">الهاتف / واتساب</label>
+            <input type="tel" id="cf-phone" name="phone" class="form-input" placeholder="+213 ..." maxlength="30">
+          </div>
+          <div class="form-field">
+            <label for="cf-type">نوع المشروع <span class="req">*</span></label>
+            <select id="cf-type" name="projectType" class="form-select" required>
+              <option value="" disabled selected>اختر نوع المشروع</option>
+              <option value="تطوير مواقع">تطوير مواقع</option>
+              <option value="تصميم جرافيك">تصميم جرافيك</option>
+              <option value="تصميم هوية بصرية">تصميم هوية بصرية</option>
+              <option value="UI/UX">UI/UX</option>
+              <option value="تصميم منشورات السوشيال ميديا">تصميم منشورات السوشيال ميديا</option>
+              <option value="مشروع آخر">مشروع آخر</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="cf-budget">الميزانية</label>
+            <select id="cf-budget" name="budget" class="form-select">
+              <option value="" selected>اختر الميزانية</option>
+              <option value="أقل من $100">أقل من $100</option>
+              <option value="$100 - $300">$100 - $300</option>
+              <option value="$300 - $500">$300 - $500</option>
+              <option value="$500 - $1000">$500 - $1000</option>
+              <option value="أكثر من $1000">أكثر من $1000</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="cf-method">طريقة التواصل المفضلة</label>
+            <select id="cf-method" name="contactMethod" class="form-select">
+              <option value="" selected>اختر طريقة التواصل</option>
+              <option value="البريد الإلكتروني">البريد الإلكتروني</option>
+              <option value="واتساب">واتساب</option>
+              <option value="تيليجرام">تيليجرام</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="cf-details">تفاصيل المشروع <span class="req">*</span></label>
+          <textarea id="cf-details" name="details" class="form-textarea" placeholder="اشرح فكرتك، الأهداف، الميزات المطلوبة، والمواعيد..." maxlength="3000" required></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="contactSubmit">
+          <span id="submitLabel">إرسال الطلب</span>
+          <span aria-hidden="true">→</span>
+        </button>
+        <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -521,6 +750,15 @@ nav.hidden-nav { transform: translateY(-120%); }
   sfxSwap.volume = 0.6;
   var soundMuted = false;
 
+  /* Unlock audio context on first interaction — needed for mobile + strict browsers */
+  function unlockAudio() {
+    [audioEntry, audioMain, sfxClick, sfxSwap].forEach(function(a) {
+      a.play().then(function() { a.pause(); a.currentTime = 0; }).catch(function(){});
+    });
+  }
+  document.addEventListener('touchstart', unlockAudio, { once: true });
+  document.addEventListener('click', unlockAudio, { once: true });
+
   function playClick() {
     if (soundMuted) return;
     sfxClick.currentTime = 0;
@@ -529,12 +767,14 @@ nav.hidden-nav { transform: translateY(-120%); }
 
   function playEntryMusic() {
     if (soundMuted) return;
-    audioEntry.play().catch(function(){});
-    gsap.to(audioEntry, { volume: 0.35, duration: 1.5 });
+    audioEntry.currentTime = 0;
+    audioEntry.play().then(function() {
+      gsap.to(audioEntry, { volume: 0.35, duration: 0.8 });
+    }).catch(function(){});
   }
 
   function fadeOutEntry(callback) {
-    gsap.to(audioEntry, { volume: 0, duration: 1.2, onComplete: function() {
+    gsap.to(audioEntry, { volume: 0, duration: 0.5, onComplete: function() {
       audioEntry.pause();
       if (callback) callback();
     }});
@@ -544,7 +784,7 @@ nav.hidden-nav { transform: translateY(-120%); }
     if (soundMuted) return;
     audioMain.currentTime = 0;
     audioMain.play().catch(function(){});
-    gsap.to(audioMain, { volume: 0.3, duration: 2 });
+    gsap.to(audioMain, { volume: 0.3, duration: 1 });
   }
 
   /* ===== CLICK SOUND ON EVERY CLICK ===== */
@@ -582,7 +822,7 @@ nav.hidden-nav { transform: translateY(-120%); }
   var gateReady = false;
   var circumference = 2 * Math.PI * 35; /* ~220 */
 
-  /* Start entry music on first user interaction (browser autoplay policy) */
+  /* Start entry music on first interaction (browser autoplay policy) */
   var musicStarted = false;
   function startEntryMusic() {
     if (musicStarted) return;
@@ -591,9 +831,11 @@ nav.hidden-nav { transform: translateY(-120%); }
   }
   document.addEventListener('click', startEntryMusic, { once: true });
   document.addEventListener('mousemove', startEntryMusic, { once: true });
+  document.addEventListener('touchstart', startEntryMusic, { once: true });
+  document.addEventListener('pointerdown', startEntryMusic, { once: true });
 
   /* Logo reveal */
-  gsap.to(gateLogo, { opacity: 1, scale: 1, duration: 1.2, delay: .3, ease: 'power3.out' });
+  gsap.to(gateLogo, { opacity: 1, scale: 1, duration: .8, delay: .1, ease: 'power3.out' });
 
   /* Animate progress with spiral */
   function step(t) {
@@ -610,14 +852,14 @@ nav.hidden-nav { transform: translateY(-120%); }
     go();
   }
 
-  setTimeout(function() { step(40); }, 300);
-  setTimeout(function() { step(75); }, 900);
-  setTimeout(function() { step(100); }, 1700);
+  setTimeout(function() { step(40); }, 150);
+  setTimeout(function() { step(75); }, 500);
+  setTimeout(function() { step(100); }, 1000);
 
-  /* Fallback: force gate ready after 3s no matter what */
+  /* Fallback: force gate ready after 2s no matter what */
   setTimeout(function() {
     if (!gateReady) onGateReady();
-  }, 3000);
+  }, 2000);
 
   function onGateReady() {
     gateReady = true;
@@ -644,7 +886,7 @@ nav.hidden-nav { transform: translateY(-120%); }
     /* Orange curtain rises from bottom */
     gsap.to(orangeCurtain, {
       y: 0,
-      duration: 1.0,
+      duration: 0.7,
       ease: 'power3.inOut',
       onComplete: function() {
         /* Fade out entry music */
@@ -659,8 +901,8 @@ nav.hidden-nav { transform: translateY(-120%); }
         /* Curtain rises up to reveal site */
         gsap.to(orangeCurtain, {
           y: '-100%',
-          duration: 1.0,
-          delay: 0.3,
+          duration: 0.7,
+          delay: 0.2,
           ease: 'power3.inOut',
           onComplete: function() {
             orangeCurtain.style.pointerEvents = 'none';
@@ -676,9 +918,9 @@ nav.hidden-nav { transform: translateY(-120%); }
   /* ===== HERO REVEAL ===== */
   function heroReveal() {
     var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.to('.hero-logo', { opacity: 1, scale: 1, duration: 2, ease: 'power4.out' }, .1);
-    tl.to('.hero-tagline', { opacity: 1, duration: 1.4 }, .6);
-    tl.to('.hero-bottom', { opacity: 1, duration: 1.4 }, 1.2);
+    tl.to('.hero-logo', { opacity: 1, scale: 1, duration: 1.2, ease: 'power4.out' }, .1);
+    tl.to('.hero-tagline', { opacity: 1, duration: .8 }, .3);
+    tl.to('.hero-bottom', { opacity: 1, duration: .8 }, .6);
   }
 
   /* ===== LENIS — Ultra Smooth ===== */
@@ -724,7 +966,7 @@ nav.hidden-nav { transform: translateY(-120%); }
     document.addEventListener('mouseleave', function() { wrap.style.opacity = '0'; });
     document.addEventListener('mouseenter', function() { wrap.style.opacity = '1'; });
 
-    document.querySelectorAll('a,button,.slide,.contact-social a,.sound-toggle,.gate-logo').forEach(function(el) {
+    document.querySelectorAll('a,button,.slide,.contact-social a,.sound-toggle,.gate-logo,.form-input,.form-select,.form-textarea,.form-submit').forEach(function(el) {
       el.addEventListener('mouseenter', function() { wrap.classList.add('hover'); });
       el.addEventListener('mouseleave', function() { wrap.classList.remove('hover'); });
     });
@@ -763,7 +1005,77 @@ nav.hidden-nav { transform: translateY(-120%); }
     });
   });
 
-  gsap.from('.contact', { y: 50, autoAlpha: 0, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: '.contact', start: 'top 88%' } });
+  gsap.from('.contact-inner', { y: 60, autoAlpha: 0, duration: 1.4, ease: 'power3.out', scrollTrigger: { trigger: '.contact', start: 'top 88%' } });
+
+  /* ===== CONTACT FORM → TELEGRAM ===== */
+  var contactForm = document.getElementById('contactForm');
+  var contactStatus = document.getElementById('formStatus');
+  var submitBtn = document.getElementById('contactSubmit');
+  var submitLabel = document.getElementById('submitLabel');
+  var submitting = false;
+
+  function showFormStatus(msg, cls) {
+    contactStatus.textContent = msg;
+    contactStatus.className = 'form-status ' + cls + ' visible';
+  }
+
+  function validateEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+  }
+
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (submitting) return;
+
+      var fd = new FormData(contactForm);
+      var data = {
+        name: (fd.get('name') || '').trim(),
+        email: (fd.get('email') || '').trim(),
+        phone: (fd.get('phone') || '').trim(),
+        projectType: (fd.get('projectType') || '').trim(),
+        budget: (fd.get('budget') || '').trim(),
+        contactMethod: (fd.get('contactMethod') || '').trim(),
+        details: (fd.get('details') || '').trim()
+      };
+
+      /* Client-side validation */
+      if (!data.name) return showFormStatus('من فضلك أدخل اسمك.', 'error');
+      if (data.name.length > 80) return showFormStatus('الاسم طويل جدًا (80 حرفًا كحد أقصى).', 'error');
+      if (!validateEmail(data.email)) return showFormStatus('من فضلك أدخل بريدًا إلكترونيًا صحيحًا.', 'error');
+      if (data.email.length > 120) return showFormStatus('البريد الإلكتروني طويل جدًا.', 'error');
+      if (data.phone.length > 30) return showFormStatus('رقم الهاتف طويل جدًا.', 'error');
+      if (!data.projectType) return showFormStatus('من فضلك اختر نوع المشروع.', 'error');
+      if (data.details.length < 10) return showFormStatus('من فضلك اشرح تفاصيل المشروع (10 أحرف على الأقل).', 'error');
+      if (data.details.length > 3000) return showFormStatus('تفاصيل المشروع طويلة جدًا.', 'error');
+
+      submitting = true;
+      submitBtn.disabled = true;
+      submitLabel.textContent = 'جاري الإرسال...';
+      showFormStatus('', 'info');
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(function(r) {
+        return r.json().then(function(j) { return { ok: r.ok, json: j }; });
+      }).then(function(res) {
+        if (res.ok) {
+          showFormStatus('تم إرسال طلبك بنجاح ✓ — شكرًا لتواصلك معي، سأراجع طلبك وأتواصل معك قريبًا.', 'success');
+          contactForm.reset();
+        } else {
+          showFormStatus((res.json && res.json.error) || 'حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.', 'error');
+        }
+      }).catch(function() {
+        showFormStatus('حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.', 'error');
+      }).finally(function() {
+        submitting = false;
+        submitBtn.disabled = false;
+        submitLabel.textContent = 'إرسال الطلب';
+      });
+    });
+  }
 
   /* ===== FALLING STICKERS (Physics-based, zero GSAP conflicts) ===== */
   ;(function(){
@@ -900,9 +1212,9 @@ nav.hidden-nav { transform: translateY(-120%); }
       var gate = document.getElementById('entryGate');
       if (gate && gate.classList.contains('hidden')) {
         clearInterval(checkReady);
-        setTimeout(startDropping, 600);
+        setTimeout(startDropping, 200);
       }
-    }, 200);
+    }, 100);
 
     /* Cleanup on scroll past hero */
     ScrollTrigger.create({
@@ -1052,9 +1364,35 @@ const noiseShader = new ShaderPass(NoiseShader);
 composer.addPass(noiseShader);
 composer.addPass(new OutputPass());
 
-/* Mouse - raw values */
+/* Mouse + Gyroscope input */
 let mx=0, my=0, smx=0, smy=0, mv=0, lmx=0, lmy=0;
-document.addEventListener('mousemove', e => { mx=(e.clientX/window.innerWidth)*2-1; my=-(e.clientY/window.innerHeight)*2+1; });
+let isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+document.addEventListener('mousemove', e => {
+  if (!isMobile) { mx=(e.clientX/window.innerWidth)*2-1; my=-(e.clientY/window.innerHeight)*2+1; }
+});
+
+/* Gyroscope for mobile */
+if (isMobile && window.DeviceOrientationEvent) {
+  /* Request permission on iOS 13+ */
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    document.addEventListener('click', function() {
+      DeviceOrientationEvent.requestPermission().then(function(state) {
+        if (state === 'granted') {
+          window.addEventListener('deviceorientation', handleOrientation);
+        }
+      }).catch(function(){});
+    }, { once: true });
+  } else {
+    window.addEventListener('deviceorientation', handleOrientation);
+  }
+}
+function handleOrientation(e) {
+  var gamma = e.gamma || 0; /* left/right tilt: -90 to 90 */
+  var beta = e.beta || 0;   /* front/back tilt: -180 to 180 */
+  mx = Math.max(-1, Math.min(1, gamma / 45));
+  my = Math.max(-1, Math.min(1, (beta - 45) / 45));
+}
 
 /* Scroll */
 let sp = 0;
