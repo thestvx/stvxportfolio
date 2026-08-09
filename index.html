@@ -46,6 +46,8 @@ html, body {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
 a { text-decoration: none; color: inherit; }
+/* Custom cursor is the ONLY cursor — hide the native one on every interactive element */
+a, button, input, select, textarea, label, summary, [role="button"], [data-magnetic] { cursor: none; }
 
 /* NOISE */
 .noise {
@@ -168,7 +170,7 @@ a { text-decoration: none; color: inherit; }
 }
 @media(max-width: 768px) {
   .cursor-wrap { display: none; }
-  body { cursor: auto; }
+  body, a, button, input, select, textarea, label, summary, [role="button"], [data-magnetic] { cursor: auto; }
 }
 
 /* ===== NAV ===== */
@@ -410,6 +412,7 @@ nav.hidden-nav { transform: translateY(-120%); }
   border: 1px solid rgba(255,255,255,.06);
   border-radius: 20px;
   backdrop-filter: blur(14px);
+  font-family: 'F37 Zagma Arabic', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 .form-row {
   display: grid;
@@ -454,14 +457,31 @@ nav.hidden-nav { transform: translateY(-120%); }
   appearance: none;
   -webkit-appearance: none;
   cursor: none;
+  font-family: 'F37 Zagma Arabic', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: .8rem;
+  font-weight: 400;
+  direction: rtl;
+  text-align: right;
   background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23FAC752' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 1.1rem center;
-  padding-right: 2.6rem;
+  background-position: left 1.1rem center;
+  padding-left: 2.6rem;
+  padding-right: 1.1rem;
+  text-indent: 0;
 }
-.form-select option {
+.form-select:hover {
+  border-color: rgba(255,255,255,.16);
+  background-color: rgba(255,255,255,.05);
+}
+.form-select option,
+.form-select optgroup {
   background: #0d0d0d;
   color: var(--text);
+  font-family: 'F37 Zagma Arabic', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: .8rem;
+  font-weight: 400;
+  direction: rtl;
+  text-align: right;
 }
 .form-textarea {
   resize: vertical;
@@ -489,11 +509,50 @@ nav.hidden-nav { transform: translateY(-120%); }
 }
 .form-submit:active { transform: translateY(0); }
 .form-submit:disabled {
-  opacity: .55;
+  opacity: .6;
   transform: none;
   box-shadow: none;
   cursor: none;
 }
+.form-submit .submit-arrow,
+.form-submit .submit-spinner,
+.form-submit .submit-check {
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.form-submit .submit-spinner {
+  display: none;
+  width: 15px; height: 15px;
+  border: 2px solid rgba(10,10,10,.18);
+  border-top-color: #0a0a0a;
+  border-radius: 50%;
+  animation: submitSpin .7s linear infinite;
+  flex: none;
+}
+.form-submit .submit-check {
+  display: none;
+  width: 18px; height: 18px;
+  flex: none;
+}
+.form-submit .submit-check svg {
+  width: 100%; height: 100%; display: block;
+}
+.form-submit .submit-check .check-path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+}
+.form-submit.is-loading .submit-arrow { display: none; }
+.form-submit.is-loading .submit-spinner { display: inline-flex; }
+.form-submit.is-success .submit-arrow { display: none; }
+.form-submit.is-success .submit-check { display: inline-flex; animation: submitPop .5s var(--ease); }
+.form-submit.is-success .submit-check .check-path { animation: checkDraw .55s var(--ease) .1s forwards; }
+.form-submit.is-success { box-shadow: 0 12px 50px rgba(250,199,82,.28); }
+@keyframes submitSpin { to { transform: rotate(360deg); } }
+@keyframes submitPop {
+  0% { transform: scale(.4); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes checkDraw { to { stroke-dashoffset: 0; } }
 .form-status {
   font-size: .72rem;
   line-height: 1.7;
@@ -649,11 +708,11 @@ nav.hidden-nav { transform: translateY(-120%); }
         <a href="mailto:faroukkir01@gmail.com" class="contact-email">faroukkir01@gmail.com</a>
       </div>
       <div class="contact-social">
-        <a href="https://x.com/iistevexn" target="_blank" rel="noreferrer" data-magnetic><img src="icons/x.png" alt="X"></a>
-        <a href="https://instagram.com/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/instagram.png" alt="Instagram"></a>
-        <a href="https://behance.net/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/behance.png" alt="Behance"></a>
-        <a href="https://facebook.com/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/facebook.png" alt="Facebook"></a>
-        <a href="https://wa.me/" target="_blank" rel="noreferrer" data-magnetic><img src="icons/whatsapp.png" alt="WhatsApp"></a>
+        <a href="https://www.facebook.com/iiStevexn/" target="_blank" rel="noopener noreferrer" data-magnetic><img src="icons/facebook.png" alt="Facebook"></a>
+        <a href="https://www.instagram.com/stvx.jpg/" target="_blank" rel="noopener noreferrer" data-magnetic><img src="icons/instagram.png" alt="Instagram"></a>
+        <a href="https://www.behance.net/stvx" target="_blank" rel="noopener noreferrer" data-magnetic><img src="icons/behance.png" alt="Behance"></a>
+        <a href="https://x.com/iistevexn" target="_blank" rel="noopener noreferrer" data-magnetic><img src="icons/x.png" alt="X"></a>
+        <a href="https://wa.me/213778789684" target="_blank" rel="noopener noreferrer" data-magnetic><img src="icons/whatsapp.png" alt="WhatsApp"></a>
       </div>
     </div>
 
@@ -714,8 +773,14 @@ nav.hidden-nav { transform: translateY(-120%); }
           <textarea id="cf-details" name="details" class="form-textarea" placeholder="اشرح فكرتك، الأهداف، الميزات المطلوبة، والمواعيد..." maxlength="3000" required></textarea>
         </div>
         <button type="submit" class="form-submit" id="contactSubmit">
-          <span id="submitLabel">إرسال الطلب</span>
-          <span aria-hidden="true">→</span>
+          <span class="submit-arrow" id="submitArrow" aria-hidden="true">→</span>
+          <span class="submit-spinner" id="submitSpinner" aria-hidden="true"></span>
+          <span class="submit-check" id="submitCheck" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path class="check-path" d="M4 12.5l5 5L20 6.5" stroke="#0a0a0a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="submit-label" id="submitLabel">إرسال الطلب</span>
         </button>
         <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
       </form>
@@ -1013,6 +1078,24 @@ nav.hidden-nav { transform: translateY(-120%); }
   var submitBtn = document.getElementById('contactSubmit');
   var submitLabel = document.getElementById('submitLabel');
   var submitting = false;
+  var resetTimer = null;
+
+  function setSubmitState(state) {
+    /* state: 'idle' | 'loading' | 'success' | 'error' */
+    submitBtn.classList.remove('is-loading', 'is-success');
+    if (state === 'loading') {
+      submitBtn.classList.add('is-loading');
+      submitLabel.textContent = 'جاري الإرسال...';
+      submitBtn.disabled = true;
+    } else if (state === 'success') {
+      submitBtn.classList.add('is-success');
+      submitLabel.textContent = 'تم الإرسال بنجاح';
+      submitBtn.disabled = true;
+    } else {
+      submitLabel.textContent = 'إرسال الطلب';
+      submitBtn.disabled = false;
+    }
+  }
 
   function showFormStatus(msg, cls) {
     contactStatus.textContent = msg;
@@ -1050,8 +1133,8 @@ nav.hidden-nav { transform: translateY(-120%); }
       if (data.details.length > 3000) return showFormStatus('تفاصيل المشروع طويلة جدًا.', 'error');
 
       submitting = true;
-      submitBtn.disabled = true;
-      submitLabel.textContent = 'جاري الإرسال...';
+      if (resetTimer) clearTimeout(resetTimer);
+      setSubmitState('loading');
       showFormStatus('', 'info');
 
       fetch('/api/contact', {
@@ -1064,15 +1147,21 @@ nav.hidden-nav { transform: translateY(-120%); }
         if (res.ok) {
           showFormStatus('تم إرسال طلبك بنجاح ✓ — شكرًا لتواصلك معي، سأراجع طلبك وأتواصل معك قريبًا.', 'success');
           contactForm.reset();
+          setSubmitState('success');
+          resetTimer = setTimeout(function() {
+            setSubmitState('idle');
+            showFormStatus('', 'info');
+            submitting = false;
+          }, 4000);
         } else {
+          setSubmitState('idle');
+          submitting = false;
           showFormStatus((res.json && res.json.error) || 'حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.', 'error');
         }
       }).catch(function() {
-        showFormStatus('حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.', 'error');
-      }).finally(function() {
+        setSubmitState('idle');
         submitting = false;
-        submitBtn.disabled = false;
-        submitLabel.textContent = 'إرسال الطلب';
+        showFormStatus('حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.', 'error');
       });
     });
   }
