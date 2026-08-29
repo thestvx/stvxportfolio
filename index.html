@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STVX — Creative Experience</title>
+<title>STVX — THE CREATIVE ONE</title>
+<link rel="icon" type="image/png" href="stvxlogo.png">
+<link rel="apple-touch-icon" href="stvxlogo.png">
+<meta name="description" content="STVX — THE CREATIVE ONE. Be creative and have fun.">
+<meta property="og:title" content="STVX — THE CREATIVE ONE">
+<meta property="og:description" content="Be creative and have fun.">
+<meta property="og:image" content="https://stvxportfolio.pages.dev/stvxlogo.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="STVX — THE CREATIVE ONE">
+<meta name="twitter:description" content="Be creative and have fun.">
+<meta name="twitter:image" content="https://stvxportfolio.pages.dev/stvxlogo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <link rel="preconnect" href="https://unpkg.com">
@@ -648,7 +659,7 @@ nav.hidden-nav { transform: translateY(-120%); }
   <div class="stickers-layer" id="stickersLayer"></div>
   <div class="hero-content">
     <div class="hero-logo"><img src="stvxlogo.png" alt="STVX"></div>
-    <div class="hero-tagline">Creative Experience</div>
+    <div class="hero-tagline">BE CREATIVE AND HAVE FUN.</div>
   </div>
   <div class="hero-bottom">
     <span>Scroll</span>
@@ -809,29 +820,69 @@ nav.hidden-nav { transform: translateY(-120%); }
   var audioMain = new Audio('backgroundmusic2.mp3');
   audioMain.loop = true;
   audioMain.volume = 0;
-  var sfxClick = new Audio('click.mp3');
-  sfxClick.volume = 0.5;
-  var sfxSwap = new Audio('swap.mp3');
-  sfxSwap.volume = 0.6;
   var soundMuted = false;
+
+  /* ----- SFX via Web Audio (shared context) so clicks never stop the music ----- */
+  var audioCtx = null;
+  var sfxBuffers = {};
+  var sfxLoaded = false;
+
+  function getCtx() {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    return audioCtx;
+  }
+
+  function loadSfx() {
+    if (sfxLoaded || !window.fetch) return;
+    sfxLoaded = true;
+    var ctx = getCtx();
+    if (!ctx) return;
+    [['click', 'click.mp3'], ['swap', 'swap.mp3']].forEach(function(pair) {
+      fetch(pair[1]).then(function(r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
+        .then(function(buf) { return ctx.decodeAudioData(buf); })
+        .then(function(decoded) { sfxBuffers[pair[0]] = decoded; })
+        .catch(function(){});
+    });
+  }
+
+  function playSfx(name, volume) {
+    if (soundMuted) return;
+    var ctx = getCtx();
+    var buffer = sfxBuffers[name];
+    if (!ctx || !buffer) return;
+    var src = ctx.createBufferSource();
+    src.buffer = buffer;
+    var gain = ctx.createGain();
+    gain.gain.value = volume == null ? 0.5 : volume;
+    src.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+    /* Autoplay policy: resume context if suspended */
+    if (ctx.state === 'suspended') ctx.resume();
+  }
 
   /* Unlock audio context on first interaction — needed for mobile + strict browsers */
   function unlockAudio() {
-    [audioEntry, audioMain, sfxClick, sfxSwap].forEach(function(a) {
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    [audioEntry, audioMain].forEach(function(a) {
       a.play().then(function() { a.pause(); a.currentTime = 0; }).catch(function(){});
     });
+    loadSfx();
   }
   document.addEventListener('touchstart', unlockAudio, { once: true });
   document.addEventListener('click', unlockAudio, { once: true });
+  document.addEventListener('mousemove', unlockAudio, { once: true });
 
   function playClick() {
-    if (soundMuted) return;
-    sfxClick.currentTime = 0;
-    sfxClick.play().catch(function(){});
+    playSfx('click', 0.5);
   }
 
   function playEntryMusic() {
     if (soundMuted) return;
+    loadSfx();
     audioEntry.currentTime = 0;
     audioEntry.play().then(function() {
       gsap.to(audioEntry, { volume: 0.35, duration: 0.8 });
@@ -847,12 +898,13 @@ nav.hidden-nav { transform: translateY(-120%); }
 
   function fadeInBackground() {
     if (soundMuted) return;
+    loadSfx();
     audioMain.currentTime = 0;
     audioMain.play().catch(function(){});
     gsap.to(audioMain, { volume: 0.3, duration: 1 });
   }
 
-  /* ===== CLICK SOUND ON EVERY CLICK ===== */
+  /* ===== CLICK SOUND ON EVERY CLICK (Web Audio — does not stop the music) ===== */
   document.addEventListener('click', function(e) {
     playClick();
   });
@@ -942,10 +994,7 @@ nav.hidden-nav { transform: translateY(-120%); }
     /* Play click then swap SFX */
     playClick();
     setTimeout(function() {
-      if (!soundMuted) {
-        sfxSwap.currentTime = 0;
-        sfxSwap.play().catch(function(){});
-      }
+      playSfx('swap', 0.6);
     }, 80);
 
     /* Orange curtain rises from bottom */
