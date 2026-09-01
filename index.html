@@ -198,7 +198,11 @@ nav {
 }
 nav.scrolled { padding: 1.2rem 3rem; }
 nav.hidden-nav { transform: translateY(-120%); }
-.logo img { width: 70px; height: auto; display: block; }
+.logo img { width: 70px; height: auto; display: block; animation: logoFloat 6s ease-in-out infinite; }
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
 .nav-links { display: flex; gap: 2.4rem; list-style: none; }
 .nav-links a {
   font-size: .55rem; letter-spacing: .22em;
@@ -904,7 +908,7 @@ nav.hidden-nav { transform: translateY(-120%); }
   function unlockAudio() {
     ctxInit();
     resumeIfSuspended();
-    ['click.mp3', 'swap.mp3', 'backgroundmusic1.mp3', 'backgroundmusic2.mp3'].forEach(function(f) {
+    ['click.mp3', 'swap.mp3', 'backgroundmusic1.mp3'].forEach(function(f) {
       loadBuffer(f.replace(/\.mp3$/, ''), f);
     });
   }
@@ -921,21 +925,6 @@ nav.hidden-nav { transform: translateY(-120%); }
     if (soundMuted) return;
     loadBuffer('entry', 'backgroundmusic1.mp3');
     whenBuffer('entry', function() { playLoop('entry', 0.35, 0.8); });
-  }
-
-  function fadeOutEntry(callback) {
-    var tr = tracks['entry'];
-    if (!tr || !tr.gain) { if (callback) callback(); return; }
-    gsap.to(tr.gain.gain, { value: 0, duration: 0.5, onComplete: function() {
-      if (tr.src) { try { tr.src.stop(); } catch(e){} tr.src = null; }
-      if (callback) callback();
-    }});
-  }
-
-  function fadeInBackground() {
-    if (soundMuted) return;
-    loadBuffer('main', 'backgroundmusic2.mp3');
-    whenBuffer('main', function() { playLoop('main', 0.3, 1); });
   }
 
   /* ===== CLICK SOUND ON EVERY CLICK (same Web Audio graph as music) ===== */
@@ -1044,13 +1033,7 @@ nav.hidden-nav { transform: translateY(-120%); }
       duration: 0.7,
       ease: 'power3.inOut',
       onComplete: function() {
-        /* Fade out entry music */
-        fadeOutEntry(function() {
-          /* Start main music */
-          fadeInBackground();
-        });
-
-        /* Hide gate behind curtain */
+        /* backgroundmusic1 keeps looping — it is THE site's background music now */
         entryGate.classList.add('hidden');
 
         /* Curtain rises up to reveal site */
@@ -1376,8 +1359,10 @@ nav.hidden-nav { transform: translateY(-120%); }
     requestAnimationFrame(loop);
 
     /* Spawn stickers at staggered intervals after site enters */
+    var stickersEnabled = false; /* STICKERS DISABLED (temporary) — set to true to re-enable */
     function startDropping() {
       if (spawned) return;
+      if (!stickersEnabled) return;
       spawned = true;
 
       /* Initial batch */
