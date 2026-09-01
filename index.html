@@ -937,6 +937,7 @@ nav.hidden-nav { transform: translateY(-120%); }
   var orangeCurtain = document.getElementById('orangeCurtain');
   var p = 0;
   var gateReady = false;
+  var gateStarted = false;
   var circumference = 2 * Math.PI * 35; /* ~220 */
 
   /* Start entry music on first interaction (browser autoplay policy) */
@@ -982,14 +983,20 @@ nav.hidden-nav { transform: translateY(-120%); }
     gateReady = true;
     gateLogo.classList.add('pulse');
     gateHint.classList.add('visible');
+    /* Enter automatically once the circle finishes loading — no click needed */
+    setTimeout(enterSite, 900);
   }
 
-  /* Logo click = enter site */
-  gateLogo.addEventListener('click', function(e) {
-    e.stopPropagation();
-    if (!gateReady) return;
+  function enterSite() {
+    if (!gateReady || gateStarted) return;
     gateReady = false;
+    gateStarted = true;
     gateLogo.classList.remove('pulse');
+    gateHint.classList.remove('visible');
+
+    /* Fade the logo hint out before curtain */
+    gsap.to(gateCounter, { autoAlpha: 0, duration: .3 });
+    gsap.to(gateHint, { autoAlpha: 0, duration: .3 });
 
     /* Play click then swap SFX */
     playClick();
@@ -1027,6 +1034,13 @@ nav.hidden-nav { transform: translateY(-120%); }
         });
       }
     });
+  }
+
+  /* Keep the logo click as a manual/early enter too (ignored after auto-enter) */
+  gateLogo.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (!gateReady) return;
+    enterSite();
   });
 
   /* ===== HERO REVEAL ===== */
