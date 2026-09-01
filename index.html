@@ -822,6 +822,9 @@ nav.hidden-nav { transform: translateY(-120%); }
 <!-- MAIN APP -->
 <script>
 ;(function(){
+  /* Don't restore previous scroll position — always start fresh at top */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
   /* =====================================================================
      AUDIO ENGINE — single Web Audio graph.
      Background music + SFX all run inside ONE AudioContext, so a click
