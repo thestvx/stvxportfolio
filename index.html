@@ -60,6 +60,18 @@ a { text-decoration: none; color: inherit; }
 /* Custom cursor is the ONLY cursor — hide the native one on every interactive element */
 a, button, input, select, textarea, label, summary, [role="button"], [data-magnetic] { cursor: none; }
 
+/* Copyright protection — no selecting / dragging / long-press save on media */
+img {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: auto;
+}
+*, *::before, *::after { -webkit-touch-callout: none; }
+
 /* NOISE */
 .noise {
   position: fixed; inset: 0;
@@ -132,15 +144,6 @@ a, button, input, select, textarea, label, summary, [role="button"], [data-magne
   font-size: .45rem; letter-spacing: .4em;
   color: var(--gold); opacity: .4;
 }
-.gate-hint {
-  margin-top: 1.6rem;
-  font-size: .5rem; letter-spacing: .3em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.15);
-  opacity: 0;
-  transition: opacity .6s ease;
-}
-.gate-hint.visible { opacity: 1; }
 
 /* Orange curtain */
 #orangeCurtain {
@@ -630,7 +633,6 @@ nav.hidden-nav { transform: translateY(-120%); }
     </svg>
   </div>
   <div class="gate-counter" id="gateCounter">0%</div>
-  <div class="gate-hint" id="gateHint">Click logo to enter</div>
 </div>
 
 <!-- Orange curtain for transition -->
@@ -813,68 +815,103 @@ nav.hidden-nav { transform: translateY(-120%); }
 <!-- MAIN APP -->
 <script>
 ;(function(){
-  /* ===== AUDIO ENGINE ===== */
-  var audioEntry = new Audio('backgroundmusic1.mp3');
-  audioEntry.loop = true;
-  audioEntry.volume = 0;
-  var audioMain = new Audio('backgroundmusic2.mp3');
-  audioMain.loop = true;
-  audioMain.volume = 0;
-  var soundMuted = false;
-
-  /* ----- SFX via Web Audio (shared context) so clicks never stop the music ----- */
+  /* =====================================================================
+     AUDIO ENGINE — single Web Audio graph.
+     Background music + SFX all run inside ONE AudioContext, so a click
+     can never interrupt the background music (no competing pipelines).
+     ===================================================================== */
+  var AC = window.AudioContext || window.webkitAudioContext;
   var audioCtx = null;
-  var sfxBuffers = {};
-  var sfxLoaded = false;
+  var masterGain = null;
+  var soundMuted = false;
+  var loaded = {};       /* name -> 'requested' | 'ready' */
+  var buffers = {};      /* name -> AudioBuffer          */
+  var pending = {};      /* name -> [callbacks]          */
+  var tracks = {};       /* name -> { gain, src }        */
 
-  function getCtx() {
-    if (!audioCtx) {
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if (AC) audioCtx = new AC();
+  function ctxInit() {
+    if (!audioCtx && AC) {
+      audioCtx = new AC();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = soundMuted ? 0 : 1;
+      masterGain.connect(audioCtx.destination);
     }
     return audioCtx;
   }
 
-  function loadSfx() {
-    if (sfxLoaded || !window.fetch) return;
-    sfxLoaded = true;
-    var ctx = getCtx();
-    if (!ctx) return;
-    [['click', 'click.mp3'], ['swap', 'swap.mp3']].forEach(function(pair) {
-      fetch(pair[1]).then(function(r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
-        .then(function(buf) { return ctx.decodeAudioData(buf); })
-        .then(function(decoded) { sfxBuffers[pair[0]] = decoded; })
-        .catch(function(){});
-    });
+  function resumeIfSuspended() {
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(function(){});
+    }
   }
 
+  function loadBuffer(name, url) {
+    if (loaded[name] || !window.fetch) return;
+    loaded[name] = true;
+    fetch(url).then(function(r) { if (!r.ok) throw 0; return r.arrayBuffer(); })
+      .then(function(buf) { var ctx = ctxInit(); if (!ctx) throw 0; return ctx.decodeAudioData(buf); })
+      .then(function(decoded) {
+        buffers[name] = decoded;
+        (pending[name] || []).forEach(function(fn) { fn(decoded); });
+        pending[name] = [];
+      })
+      .catch(function(){});
+  }
+
+  function whenBuffer(name, cb) {
+    if (buffers[name]) { cb(buffers[name]); return; }
+    (pending[name] = pending[name] || []).push(cb);
+  }
+
+  /* Start a looping music track on a dedicated gain node */
+  function playLoop(name, volume, fadeDur) {
+    var ctx = audioCtx;
+    if (!ctx || !buffers[name]) return;
+    if (!tracks[name]) {
+      var g = ctx.createGain();
+      g.gain.value = 0;
+      g.connect(masterGain);
+      tracks[name] = { gain: g, src: null };
+    }
+    var tr = tracks[name];
+    if (tr.src) return;
+    var src = ctx.createBufferSource();
+    src.buffer = buffers[name];
+    src.loop = true;
+    src.connect(tr.gain);
+    src.start();
+    tr.src = src;
+    gsap.to(tr.gain.gain, { value: volume, duration: fadeDur || 0.8 });
+  }
+
+  /* Short one-shot SFX through the same context+master gain */
   function playSfx(name, volume) {
     if (soundMuted) return;
-    var ctx = getCtx();
-    var buffer = sfxBuffers[name];
-    if (!ctx || !buffer) return;
-    var src = ctx.createBufferSource();
-    src.buffer = buffer;
-    var gain = ctx.createGain();
-    gain.gain.value = volume == null ? 0.5 : volume;
-    src.connect(gain);
-    gain.connect(ctx.destination);
-    src.start();
-    /* Autoplay policy: resume context if suspended */
-    if (ctx.state === 'suspended') ctx.resume();
+    whenBuffer(name, function(buf) {
+      var ctx = audioCtx;
+      if (!ctx || !buf) return;
+      resumeIfSuspended();
+      var src = ctx.createBufferSource();
+      src.buffer = buf;
+      var g = ctx.createGain();
+      g.gain.value = volume == null ? 0.5 : volume;
+      src.connect(g);
+      g.connect(masterGain || ctx.destination);
+      src.start();
+    });
   }
 
-  /* Unlock audio context on first interaction — needed for mobile + strict browsers */
   function unlockAudio() {
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    [audioEntry, audioMain].forEach(function(a) {
-      a.play().then(function() { a.pause(); a.currentTime = 0; }).catch(function(){});
+    ctxInit();
+    resumeIfSuspended();
+    ['click.mp3', 'swap.mp3', 'backgroundmusic1.mp3', 'backgroundmusic2.mp3'].forEach(function(f) {
+      loadBuffer(f.replace(/\.mp3$/, ''), f);
     });
-    loadSfx();
   }
   document.addEventListener('touchstart', unlockAudio, { once: true });
   document.addEventListener('click', unlockAudio, { once: true });
   document.addEventListener('mousemove', unlockAudio, { once: true });
+  document.addEventListener('pointerdown', unlockAudio, { once: true });
 
   function playClick() {
     playSfx('click', 0.5);
@@ -882,29 +919,26 @@ nav.hidden-nav { transform: translateY(-120%); }
 
   function playEntryMusic() {
     if (soundMuted) return;
-    loadSfx();
-    audioEntry.currentTime = 0;
-    audioEntry.play().then(function() {
-      gsap.to(audioEntry, { volume: 0.35, duration: 0.8 });
-    }).catch(function(){});
+    loadBuffer('entry', 'backgroundmusic1.mp3');
+    whenBuffer('entry', function() { playLoop('entry', 0.35, 0.8); });
   }
 
   function fadeOutEntry(callback) {
-    gsap.to(audioEntry, { volume: 0, duration: 0.5, onComplete: function() {
-      audioEntry.pause();
+    var tr = tracks['entry'];
+    if (!tr || !tr.gain) { if (callback) callback(); return; }
+    gsap.to(tr.gain.gain, { value: 0, duration: 0.5, onComplete: function() {
+      if (tr.src) { try { tr.src.stop(); } catch(e){} tr.src = null; }
       if (callback) callback();
     }});
   }
 
   function fadeInBackground() {
     if (soundMuted) return;
-    loadSfx();
-    audioMain.currentTime = 0;
-    audioMain.play().catch(function(){});
-    gsap.to(audioMain, { volume: 0.3, duration: 1 });
+    loadBuffer('main', 'backgroundmusic2.mp3');
+    whenBuffer('main', function() { playLoop('main', 0.3, 1); });
   }
 
-  /* ===== CLICK SOUND ON EVERY CLICK (Web Audio — does not stop the music) ===== */
+  /* ===== CLICK SOUND ON EVERY CLICK (same Web Audio graph as music) ===== */
   document.addEventListener('click', function(e) {
     playClick();
   });
@@ -915,24 +949,27 @@ nav.hidden-nav { transform: translateY(-120%); }
     e.stopPropagation();
     soundMuted = !soundMuted;
     soundToggle.classList.toggle('muted', soundMuted);
-    if (soundMuted) {
-      gsap.to(audioEntry, { volume: 0, duration: 0.5 });
-      gsap.to(audioMain, { volume: 0, duration: 0.5 });
-    } else {
-      if (!audioEntry.paused && audioEntry.currentTime > 0) {
-        gsap.to(audioEntry, { volume: 0.35, duration: 0.5 });
-      }
-      if (!audioMain.paused && audioMain.currentTime > 0) {
-        gsap.to(audioMain, { volume: 0.3, duration: 0.5 });
-      }
-    }
+    if (!masterGain) return;
+    gsap.to(masterGain.gain, { value: soundMuted ? 0 : 1, duration: 0.5 });
   });
+
+  /* ===== COPYRIGHT PROTECTION — block download/select on images ===== */
+  document.addEventListener('contextmenu', function(e) {
+    var t = e.target;
+    if (t && t.tagName === 'IMG') { e.preventDefault(); }
+  });
+  document.addEventListener('dragstart', function(e) {
+    var t = e.target;
+    if (t && t.tagName === 'IMG') { e.preventDefault(); }
+  });
+  /* Re-allow matching the cursor img + interactive images if any need pointer */
+  var allImgs = document.querySelectorAll('img');
+  allImgs.forEach(function(im) { im.draggable = false; });
 
   /* ===== ENTRY GATE ===== */
   var gateFill = document.getElementById('gateFill');
   var gateCounter = document.getElementById('gateCounter');
   var gateLogo = document.getElementById('gateLogo');
-  var gateHint = document.getElementById('gateHint');
   var entryGate = document.getElementById('entryGate');
   var orangeCurtain = document.getElementById('orangeCurtain');
   var p = 0;
@@ -982,7 +1019,6 @@ nav.hidden-nav { transform: translateY(-120%); }
   function onGateReady() {
     gateReady = true;
     gateLogo.classList.add('pulse');
-    gateHint.classList.add('visible');
     /* Enter automatically once the circle finishes loading — no click needed */
     setTimeout(enterSite, 900);
   }
@@ -992,11 +1028,9 @@ nav.hidden-nav { transform: translateY(-120%); }
     gateReady = false;
     gateStarted = true;
     gateLogo.classList.remove('pulse');
-    gateHint.classList.remove('visible');
 
-    /* Fade the logo hint out before curtain */
+    /* Fade the counter out before curtain */
     gsap.to(gateCounter, { autoAlpha: 0, duration: .3 });
-    gsap.to(gateHint, { autoAlpha: 0, duration: .3 });
 
     /* Play click then swap SFX */
     playClick();
