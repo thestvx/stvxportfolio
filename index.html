@@ -175,12 +175,10 @@ img {
   width: 32px; height: 32px;
   object-fit: contain;
   pointer-events: none;
-  filter: drop-shadow(0 0 3px rgba(255,255,255,.6)) drop-shadow(0 0 8px rgba(250,199,82,.3));
-  transition: transform .35s var(--ease), filter .35s var(--ease);
+  transition: transform .35s var(--ease);
 }
 .cursor-wrap.hover .cursor-img {
   transform: scale(1.4);
-  filter: drop-shadow(0 0 6px rgba(255,255,255,.8)) drop-shadow(0 0 14px rgba(250,199,82,.6));
 }
 @media(max-width: 768px) {
   .cursor-wrap { display: none; }
@@ -309,6 +307,11 @@ nav.hidden-nav { transform: translateY(-120%); }
 .hero-logo img {
   width: clamp(200px, 30vw, 420px); height: auto;
   filter: drop-shadow(0 0 60px rgba(250,199,82,.2));
+  animation: heroFloat 7s ease-in-out infinite;
+}
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
 }
 .hero-tagline {
   font-size: clamp(.4rem, .8vw, .55rem);
